@@ -98,7 +98,7 @@ mod tests {
     #[test]
     fn sumcheck_test() {
         let g: prover::MultiPoly = SparsePolynomial::from_coefficients_vec(
-                3,
+                4,
                 vec![
                     (Fq::from(2), SparseTerm::new(vec![(0, 3)])),
                     (Fq::from(1), SparseTerm::new(vec![(0, 1), (2, 1)])),
