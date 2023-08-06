@@ -20,9 +20,9 @@ impl Prover {
 	    }
     }
 
-    pub fn compute_h (&mut self) -> Fq {
-        let number_of_variants : i32 = cast_usize_to_i32(self.g.num_vars);
-        let number_of_combinations: i32 = number_of_variants.pow(2);
+    pub fn compute_h(&mut self) -> Fq {
+        let number_of_variants = self.g.num_vars;
+        let number_of_combinations = 2u64.pow(number_of_variants as u32);
         let mut h = Fq::from(0);
         (0..number_of_combinations).for_each(|i| {
             let combination = get_fq_binary_representation(i, number_of_variants);
@@ -31,16 +31,12 @@ impl Prover {
         h
     }
 
-    pub fn compute_sum (&mut self, r_vec: Vec<Fq>, index: usize) -> UniPoly {
-
-        let unfixed_variants: i32 = cast_usize_to_i32(self.g.num_vars-index-1);
+    pub fn compute_sum(&mut self, r_vec: Vec<Fq>, index: usize) -> UniPoly {
+        let unfixed_variants = self.g.num_vars - index - 1;
         
         let mut si: UniPoly = UniSparsePolynomial::default();
-        let mut number_of_combinations = unfixed_variants.pow(2);
+        let number_of_combinations = 2_u64.pow(unfixed_variants as u32);
     
-        if number_of_combinations < 2 {
-            number_of_combinations = number_of_combinations + 1;
-        }
         for i in 0..number_of_combinations {
             let mut gi = r_vec.clone();
             let mut combination_vector: Vec<Fq> = get_fq_binary_representation(i, unfixed_variants);
@@ -117,16 +113,12 @@ fn cast_fq_to_i32 (f: Fq) -> i32 {
     f.to_string().parse::<i32>().unwrap()
 }
 
-fn cast_usize_to_i32 (u: usize) -> i32 {
-    u.try_into().unwrap()
-}
-
 fn complete_v_with_0 (v: &mut Vec<(usize, Fq)>, new_length: usize) {
     for i in v.len()..new_length {
         v.insert(i, (i, Fq::from(0)));
     }
 }
 
-fn get_fq_binary_representation(number: i32, pow: i32) -> Vec<Fq> {
-    return (0..pow).map (|n| Fq::from((number >> n) & 1)).collect();
+fn get_fq_binary_representation(number: u64, pow: usize) -> Vec<Fq> {
+    return (0..pow).map(|n| Fq::from((number >> n) & 1)).collect();
 }
